@@ -1,60 +1,88 @@
 """
-17. Letter Combinations of a Phone Number
+29. Divide Two Integers
 Medium
 Topics
 premium lock icon
 Companies
-Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.
+Given two integers dividend and divisor, divide two integers without using multiplication, division, and mod operator.
 
-A mapping of digits to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+The integer division should truncate toward zero, which means losing its fractional part. For example, 8.345 would be truncated to 8, and -2.7335 would be truncated to -2.
 
+Return the quotient after dividing dividend by divisor.
+
+Note: Assume we are dealing with an environment that could only store integers within the 32-bit signed integer range: [−231, 231 − 1]. For this problem, if the quotient is strictly greater than 231 - 1, then return 231 - 1, and if the quotient is strictly less than -231, then return -231.
 
 
 
 Example 1:
 
-Input: digits = "23"
-Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+Input: dividend = 10, divisor = 3
+Output: 3
+Explanation: 10/3 = 3.33333.. which is truncated to 3.
 Example 2:
 
-Input: digits = "2"
-Output: ["a","b","c"]
+Input: dividend = 7, divisor = -3
+Output: -2
+Explanation: 7/-3 = -2.33333.. which is truncated to -2.
 
 
 Constraints:
 
-1 <= digits.length <= 4
-digits[i] is a digit in the range ['2', '9'].
+-231 <= dividend, divisor <= 231 - 1
+divisor != 0
+
 """
 
+
 class Solution(object):
-    def letterCombinations(self, digits):
+    def divide(self, dividend, divisor):
         """
-        :type digits: str
-        :rtype: List[str]
+        :type dividend: int
+        :type divisor: int
+        :rtype: int
+        Limit:  -2147483648 to 2147483647
         """
-        key_map = {"2": ["a","b","c"],
-                   "3": ["d","e","f"],
-                   "4": ["g","h","i"],
-                   "5": ["j","k","l"],
-                   "6": ["m","n","o"],
-                   "7": ["p","q","r","s"],
-                   "8": ["t","u","v"],
-                   "9": ["w","x","y","z"]}
 
-        output_combinations = []
-        for digit in digits:
-            keys = key_map.get(digit)
-            if digit == 1 or output_combinations == []:
-                output_combinations = keys
-            else:
-                temp_op = []
-                for output_combination in output_combinations:
-                    for key in keys:
-                        temp_op.append(output_combination + key)
-                output_combinations = temp_op
-        return output_combinations
+        sum = 0
+        is_positive = True
+        if divisor > 0 and dividend > 0:
+            is_positive = True
+        elif divisor > 0 and dividend < 0:
+            is_positive = False
+        elif divisor < 0 and dividend > 0:
+            is_positive = False
+        else:
+            is_positive = True
 
+        carryExtraDividend = False
+        if divisor == -2147483648:
+            divisor = 2147483647
 
-s = Solution()
-print(s.letterCombinations("456"))
+        if dividend == 2147483648:
+            dividend = 2147483647
+            carryExtraDividend = True
+
+        divisor = -abs(divisor)
+        dividend = -abs(dividend)
+
+        result = 0
+        while dividend <= divisor:
+            dividend -= divisor
+            result -= 1
+
+        if result == -2147483648:
+            if is_positive:
+                return 2147483647
+
+        if not is_positive:
+            return result
+        else:
+            return -result
+
+s=Solution()
+print(s.divide(500,98))
+#print(s.divide(500,98) == int(round(500/98,0)))
+#print(s.divide(-500,98) == int(round(500/98,0)))
+#print(s.divide(500,-98) == int(round(500/-98,0)))
+#print(s.divide(-500,-98) == int(round(-500/-98,0)))
+print(s.divide(-2147483647,-1) == int(round(2147483648/-1,0)))
