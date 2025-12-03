@@ -32,6 +32,7 @@ Constraints:
 divisor != 0
 
 """
+import math
 
 
 class Solution(object):
@@ -43,7 +44,12 @@ class Solution(object):
         Limit:  -2147483648 to 2147483647
         """
 
-        sum = 0
+        if dividend == 0:
+            return 0
+
+        if divisor == 1:
+            return dividend
+
         is_positive = True
         if divisor > 0 and dividend > 0:
             is_positive = True
@@ -53,36 +59,57 @@ class Solution(object):
             is_positive = False
         else:
             is_positive = True
-
-        carryExtraDividend = False
-        if divisor == -2147483648:
-            divisor = 2147483647
-
-        if dividend == 2147483648:
-            dividend = 2147483647
-            carryExtraDividend = True
+        #
+        # carryExtraDividend = False
+        # if divisor == -2147483648:
+        #     divisor = 2147483647
+        #
+        # if dividend == -2147483648:
+        #     dividend = 2147483647
+        #     carryExtraDividend = True
+        #
 
         divisor = -abs(divisor)
         dividend = -abs(dividend)
 
-        result = 0
-        while dividend <= divisor:
-            dividend -= divisor
-            result -= 1
 
-        if result == -2147483648:
-            if is_positive:
-                return 2147483647
+        def bitwise_division(a,b):
+            numerator = 0
+            upper_limit = i = int(math.floor(math.log(a,2)))
+            while i in range(upper_limit,-1,-1) and a > 0:
+                val = b << i
+                if val <= a:
+                    a = a-val
+                    numerator += (1 << i)
+                i=i-1
+            return numerator
+
+        numerator =  (bitwise_division(dividend,divisor))
 
         if not is_positive:
-            return result
-        else:
-            return -result
+            return -numerator
+
+        return numerator
+    #
+    # result = 0
+    #     while dividend <= divisor:
+    #         dividend -= divisor
+    #         result -= 1
+    #
+    #     if result == -2147483648:
+    #         if is_positive:
+    #             return 2147483647
+    #
+    #     if not is_positive:
+    #         return result
+    #     else:
+    #         return -result
+
 
 s=Solution()
 print(s.divide(500,98))
-#print(s.divide(500,98) == int(round(500/98,0)))
-#print(s.divide(-500,98) == int(round(500/98,0)))
-#print(s.divide(500,-98) == int(round(500/-98,0)))
-#print(s.divide(-500,-98) == int(round(-500/-98,0)))
-print(s.divide(-2147483647,-1) == int(round(2147483648/-1,0)))
+print(s.divide(500,98) == int(round(500/98,0)))
+print(s.divide(-500,98) == int(round(500/98,0)))
+print(s.divide(500,-98) == int(round(500/-98,0)))
+print(s.divide(-500,-98) == int(round(-500/-98,0)))
+print(s.divide(-2147483648,-1))
